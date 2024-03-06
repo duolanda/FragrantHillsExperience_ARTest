@@ -56,7 +56,10 @@ namespace Test
             Debug.Log(spotTitle);
             
             spotTitle.text = "123";
-            spotDetail.text = "456";
+            
+            ScenicSpotDictionary.TryGetValue("香雾窟", out string detail);
+            Debug.Log("拿到介绍："+detail);
+            spotDetail.text = detail;
             
             string title = "梯云山馆";
             if (title == "梯云山馆")

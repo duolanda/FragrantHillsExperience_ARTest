@@ -73,7 +73,6 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
         void Awake()
         {
-            debugInfo.text = "AWAKE NOW\n";
             m_TrackedImageManager = GetComponent<ARTrackedImageManager>();
             LoadScenicSpots();
         }
@@ -100,17 +99,14 @@ namespace UnityEngine.XR.ARFoundation.Samples
             Transform spotDetailTransform = infoPanel.transform.Find("SpotDetail");
             TextMeshPro title = titleTransform.GetComponent<TextMeshPro>();
             TextMeshPro spotDetail = spotDetailTransform.GetComponent<TextMeshPro>();
-
-            debugInfo.text = "Debug Info!!!\n";
-            debugInfo.text += "infoPanel："+infoPanel+"\n";
-            debugInfo.text += "titleTransform："+titleTransform+"\n";
-            debugInfo.text += "title text：" + title.text;
             
             // 更新景点名称
             title.text = trackedImage.referenceImage.name;
             //更新景点介绍
             ScenicSpotDictionary.TryGetValue(name, out string detail);
             spotDetail.text = detail;
+
+            debugInfo.text = detail;
 
             if (title.text == "梯云山馆")
             {
@@ -125,13 +121,12 @@ namespace UnityEngine.XR.ARFoundation.Samples
             }
             
 
-
             // Disable the visual plane if it is not being tracked
             if (trackedImage.trackingState != TrackingState.None)
             {
                 canvas.gameObject.SetActive(true);
 
-                // The image extents is only valid when the image is being tracked
+                // 根据AR中跟踪到的二维图像的实际物理大小动态调整与之关联的GameObject的大小
                 trackedImage.transform.localScale = new Vector3(trackedImage.size.x, 1f, trackedImage.size.y);
             }
             else
@@ -165,7 +160,6 @@ namespace UnityEngine.XR.ARFoundation.Samples
                 ScenicSpotDictionary.Add(scenicSpot.name, scenicSpot.description);
                 // Debug.Log($"Name: {scenicSpot.name}, Description: {scenicSpot.description}")
             }
-            debugInfo.text = "Json Done\n";
         }
         
         void ChangeVideoByClip(VideoClip newClip)
