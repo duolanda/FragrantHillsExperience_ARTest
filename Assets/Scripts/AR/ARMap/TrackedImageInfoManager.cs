@@ -156,7 +156,8 @@ namespace UnityEngine.XR.ARFoundation.Samples
         
         void LoadScenicSpots()
         {
-            string jsonText = File.ReadAllText(Application.dataPath + "/Resources/Json/ScenicSpotsDetails.json");
+            TextAsset textAsset = Resources.Load<TextAsset>("Json/ScenicSpotsDetails");
+            string jsonText = textAsset.text;
             
             ScenicSpot[] scenicSpotList = FromJson<ScenicSpot>(jsonText);
             foreach (ScenicSpot scenicSpot in scenicSpotList)
