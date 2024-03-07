@@ -65,7 +65,8 @@ namespace UnityEngine.XR.ARFoundation.Samples
         ARTrackedImageManager m_TrackedImageManager;
         
         private Dictionary<string, string> ScenicSpotDictionary = new Dictionary<string, string>();
-        
+        private Dictionary<GameObject, string> imageObjectToNameMap = new Dictionary<GameObject, string>();
+
         private static T[] FromJson<T>(string json) {
             ScenicSpotList<T> wrapper = JsonUtility.FromJson<ScenicSpotList<T>>(json);
             return wrapper.items;
@@ -89,26 +90,67 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
         void UpdateInfo(ARTrackedImage trackedImage)
         {
-            debugInfo.text = "This will be show\n";
-            // Set canvas camera
-            var canvas = trackedImage.GetComponentInChildren<Canvas>();
-            canvas.worldCamera = worldSpaceCanvasCamera;
+            var planeParentGo = trackedImage.transform.GetChild(0).gameObject;
+            var circleBorder = planeParentGo.transform.GetChild(0).gameObject;
 
+            
+            // Disable the canvas if it is not being tracked
+            if (trackedImage.trackingState != TrackingState.None)
+            {
+                circleBorder.SetActive(true);
+
+                // 根据AR中跟踪到的二维图像的实际物理大小动态调整与之关联的GameObject的大小
+                trackedImage.transform.localScale = new Vector3(trackedImage.size.x, 1f, trackedImage.size.y);
+                
+                // var material = circleBorder.GetComponentInChildren<MeshRenderer>().material;
+                // material.mainTexture = defaultTexture;
+            }
+            else
+            {
+                circleBorder.SetActive(false);
+            }
+        }
+
+        void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)
+        {
+            foreach (var trackedImage in eventArgs.added)
+            {
+                // 添加映射
+                if (!imageObjectToNameMap.TryGetValue(trackedImage.gameObject, out string imageName))
+                {
+                    imageObjectToNameMap[trackedImage.gameObject] = trackedImage.referenceImage.name;
+                }
+                // Give the initial image a reasonable default scale
+                trackedImage.transform.localScale = new Vector3(0.01f, 1f, 0.01f);
+                UpdateInfo(trackedImage);
+            }
+
+            foreach (var trackedImage in eventArgs.updated)
+                UpdateInfo(trackedImage);
+        }
+
+        public void OnImageClicked(GameObject trackedImageGameObject)
+        {
+            var planeParentGo = trackedImageGameObject.transform.GetChild(0).gameObject;
+            var circleBorder = planeParentGo.transform.GetChild(0).gameObject;
+            var canvas = trackedImageGameObject.GetComponentInChildren<Canvas>(true); // true未激活也能找
+            canvas.worldCamera = worldSpaceCanvasCamera;
+            
             Transform infoPanel = canvas.transform.Find("Background");
             Transform titleTransform = infoPanel.transform.Find("Title");
             Transform spotDetailTransform = infoPanel.transform.Find("SpotDetail");
             TextMeshPro title = titleTransform.GetComponent<TextMeshPro>();
             TextMeshPro spotDetail = spotDetailTransform.GetComponent<TextMeshPro>();
-            
-            string scenicSpotName = trackedImage.referenceImage.name;
+
+            imageObjectToNameMap.TryGetValue(trackedImageGameObject, out string scenicSpotName);
+
+            debugInfo.text = "scenicSpotName:" + scenicSpotName;
             // 更新景点名称
             title.text = scenicSpotName;
             //更新景点介绍
             ScenicSpotDictionary.TryGetValue(scenicSpotName, out string detail);
             spotDetail.text = detail;
-
-            debugInfo.text = detail;
-
+            
             if (title.text == "梯云山馆")
             {
                 VideoClip videoClip = Resources.Load<VideoClip>("Videos/占位视频");
@@ -121,35 +163,27 @@ namespace UnityEngine.XR.ARFoundation.Samples
                 ChangeVideoByClip(videoClip);
             }
             
-
-            // Disable the canvas if it is not being tracked
-            if (trackedImage.trackingState != TrackingState.None)
-            {
-                canvas.gameObject.SetActive(true);
-
-                // 根据AR中跟踪到的二维图像的实际物理大小动态调整与之关联的GameObject的大小
-                trackedImage.transform.localScale = new Vector3(trackedImage.size.x, 1f, trackedImage.size.y);
-            }
-            else
-            {
-                canvas.gameObject.SetActive(false);
-            }
+            circleBorder.gameObject.SetActive(false);
+            canvas.gameObject.SetActive(true);
         }
 
-        void OnTrackedImagesChanged(ARTrackedImagesChangedEventArgs eventArgs)
+        public void CloseAllCanvasesAndShowBorders()
         {
-            foreach (var trackedImage in eventArgs.added)
+            foreach (var trackedImageGameObject in imageObjectToNameMap.Keys)
             {
-                // 注释掉，PrefabImagePairManager 已经做这个处理了
-                // Give the initial image a reasonable default scale
-                // trackedImage.transform.localScale = new Vector3(0.01f, 1f, 0.01f);
+                var canvas = trackedImageGameObject.GetComponentInChildren<Canvas>(true); 
+                if (canvas != null)
+                {
+                    canvas.gameObject.SetActive(false); // 关闭 Canvas
+                }
 
-                
-                UpdateInfo(trackedImage);
+                var planeParentGo = trackedImageGameObject.transform.GetChild(0).gameObject;
+                var circleBorder = planeParentGo.transform.GetChild(0).gameObject;
+                if (circleBorder != null)
+                {
+                    circleBorder.SetActive(true); // 显示 circleBorder
+                }
             }
-
-            foreach (var trackedImage in eventArgs.updated)
-                UpdateInfo(trackedImage);
         }
         
         void LoadScenicSpots()

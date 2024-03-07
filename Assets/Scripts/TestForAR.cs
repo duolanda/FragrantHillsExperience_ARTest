@@ -41,7 +41,7 @@ namespace Test
 
         void Start()
         {
-            var canvas = testPrefab.GetComponentInChildren<Canvas>();
+            var canvas = testPrefab.GetComponentInChildren<Canvas>(true);
             // canvas.worldCamera = worldSpaceCanvasCamera;
 
             Transform infoPanel = canvas.transform.Find("Background");
