@@ -100,10 +100,11 @@ namespace UnityEngine.XR.ARFoundation.Samples
             TextMeshPro title = titleTransform.GetComponent<TextMeshPro>();
             TextMeshPro spotDetail = spotDetailTransform.GetComponent<TextMeshPro>();
             
+            string scenicSpotName = trackedImage.referenceImage.name;
             // 更新景点名称
-            title.text = trackedImage.referenceImage.name;
+            title.text = scenicSpotName;
             //更新景点介绍
-            ScenicSpotDictionary.TryGetValue(name, out string detail);
+            ScenicSpotDictionary.TryGetValue(scenicSpotName, out string detail);
             spotDetail.text = detail;
 
             debugInfo.text = detail;
@@ -121,7 +122,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             }
             
 
-            // Disable the visual plane if it is not being tracked
+            // Disable the canvas if it is not being tracked
             if (trackedImage.trackingState != TrackingState.None)
             {
                 canvas.gameObject.SetActive(true);
@@ -139,9 +140,11 @@ namespace UnityEngine.XR.ARFoundation.Samples
         {
             foreach (var trackedImage in eventArgs.added)
             {
+                // 注释掉，PrefabImagePairManager 已经做这个处理了
                 // Give the initial image a reasonable default scale
-                trackedImage.transform.localScale = new Vector3(0.01f, 1f, 0.01f);
+                // trackedImage.transform.localScale = new Vector3(0.01f, 1f, 0.01f);
 
+                
                 UpdateInfo(trackedImage);
             }
 

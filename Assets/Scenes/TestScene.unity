@@ -291,6 +291,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5204518934625746950, guid: d2be374ebc935401b9d909f2930bff4d, type: 3}
+      propertyPath: m_text
+      value: "\u9999\u96FE\u7A9F\u5EFA\u4E8E\u4E7E\u9686\u5341\u5E74\uFF081745\u5E74\uFF09\uFF0C\u662F\u6E05\u9759\u5B9C\u56ED\u65F6\u671F\u4E8C\u5341\u516B\u666F\u4E2D\u5730\u7406\u4F4D\u7F6E\u6700\u9AD8\u7684\u4E00\u666F\uFF0C\u56E0\u4F4D\u5C45\u534A\u5C71\uFF0C\u6B64\u5904\u7EFF\u836B\u63A9\u6620\uFF0C\u6E05\u9759\u4F18\u96C5\uFF0C\u8349\u6728\u82B3\u9999\u5F25\u6F2B\uFF0C\u6545\u88AB\u79F0\u505A\u9999\u96FE\u7A9F\uFF0C\u610F\u4E3A\u82B3\u9999\u5BC6\u5E03\u7684\u9759\u5BA4\u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174115694163013878, guid: d2be374ebc935401b9d909f2930bff4d, type: 3}
+      propertyPath: m_text
+      value: "\u9999\u96FE\u7A9F"
+      objectReference: {fileID: 0}
     - target: {fileID: 8151448350763725861, guid: d2be374ebc935401b9d909f2930bff4d, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
