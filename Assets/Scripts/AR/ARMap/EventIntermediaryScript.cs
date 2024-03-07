@@ -30,27 +30,22 @@ public class EventIntermediaryScript : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 // 检测射线是否碰到了我们的目标物体
-                if (hit.collider != null && hit.collider.gameObject.name=="Plane")
+                if (hit.collider != null && hit.collider.gameObject.name == "Plane")
                 {
                     if (arSessionOrigin != null)
                     {
                         arSessionOrigin.GetComponent<TrackedImageInfoManager>().OnImageClicked(this.gameObject);
                     }
                 }
-                else
+                // 如果触摸的是具有特定标签的对象，比如“Interactive”，用来实现其他触摸交互
+                else if (hit.collider.gameObject.CompareTag("Interactive"))
                 {
-                    // 如果触摸的是具有特定标签的对象，比如“Interactive”，则不关闭 Canvas
-                    if (hit.collider.gameObject.CompareTag("Interactive"))
-                    {
-                        // 可以在这里处理触摸到特定对象的逻辑
-                    }
-                    else
-                    {
-                        // 否则，触摸位置在 Canvas 之外，关闭所有 Canvas 并显示 circleBorder
-                        arSessionOrigin.GetComponent<TrackedImageInfoManager>().CloseAllCanvasesAndShowBorders();
-                    }
+                    // 可以在这里处理触摸到特定对象的逻辑
                 }
-                
+            }
+            else {
+                // 射线没有碰撞到任何对象，这意味着点击的是屏幕上的其他位置，关闭所有 Canvas 并显示 circleBorder
+                arSessionOrigin.GetComponent<TrackedImageInfoManager>().CloseAllCanvasesAndShowBorders();
             }
         }
     }
