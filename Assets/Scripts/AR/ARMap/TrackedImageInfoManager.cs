@@ -131,6 +131,8 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
         public void OnImageClicked(GameObject trackedImageGameObject)
         {
+            DeactivateAllTrackedImages(trackedImageGameObject);
+            
             var planeParentGo = trackedImageGameObject.transform.GetChild(0).gameObject;
             var circleBorder = planeParentGo.transform.GetChild(0).gameObject;
             var canvas = trackedImageGameObject.GetComponentInChildren<Canvas>(true); // true未激活也能找
@@ -144,7 +146,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
             imageObjectToNameMap.TryGetValue(trackedImageGameObject, out string scenicSpotName);
 
-            debugInfo.text = "scenicSpotName:" + scenicSpotName;
+            // debugInfo.text = "scenicSpotName:" + scenicSpotName;
             // 更新景点名称
             title.text = scenicSpotName;
             //更新景点介绍
@@ -176,15 +178,26 @@ namespace UnityEngine.XR.ARFoundation.Samples
                 {
                     canvas.gameObject.SetActive(false); // 关闭 Canvas
                 }
-
-                var planeParentGo = trackedImageGameObject.transform.GetChild(0).gameObject;
-                var circleBorder = planeParentGo.transform.GetChild(0).gameObject;
-                if (circleBorder != null)
+            }
+            
+            foreach (var item in imageObjectToNameMap.Keys)
+            {
+                item.SetActive(true);
+            }
+        }
+        
+        private void DeactivateAllTrackedImages(GameObject except)
+        {
+            foreach (var item in imageObjectToNameMap.Keys)
+            {
+                if (item != except)
                 {
-                    circleBorder.SetActive(true); // 显示 circleBorder
+                    item.SetActive(false);
                 }
             }
         }
+
+
         
         void LoadScenicSpots()
         {

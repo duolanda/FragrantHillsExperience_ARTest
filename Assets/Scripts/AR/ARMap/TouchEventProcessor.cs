@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARFoundation.Samples;
 
-public class EventIntermediaryScript : MonoBehaviour
+public class TouchEventProcessor : MonoBehaviour
 {
     private ARSessionOrigin arSessionOrigin;
+    private TrackedImageInfoManager trackedImageInfoManager;
 
     void Start()
     {
@@ -14,8 +15,8 @@ public class EventIntermediaryScript : MonoBehaviour
         if (arSessionOriginObject != null)
         {
             arSessionOrigin = arSessionOriginObject.GetComponent<ARSessionOrigin>();
+            trackedImageInfoManager = arSessionOrigin.GetComponent<TrackedImageInfoManager>();
         }
-        Debug.Log("arSessionOrigin"+arSessionOrigin);
     }
 
     void Update()
@@ -34,7 +35,8 @@ public class EventIntermediaryScript : MonoBehaviour
                 {
                     if (arSessionOrigin != null)
                     {
-                        arSessionOrigin.GetComponent<TrackedImageInfoManager>().OnImageClicked(this.gameObject);
+                        // Debug.Log("触发的是" + hit.collider.gameObject.transform.parent.parent.gameObject.name);
+                        trackedImageInfoManager.OnImageClicked(hit.collider.gameObject.transform.parent.parent.gameObject);
                     }
                 }
                 // 如果触摸的是具有特定标签的对象，比如“Interactive”，用来实现其他触摸交互
@@ -45,7 +47,7 @@ public class EventIntermediaryScript : MonoBehaviour
             }
             else {
                 // 射线没有碰撞到任何对象，这意味着点击的是屏幕上的其他位置，关闭所有 Canvas 并显示 circleBorder
-                arSessionOrigin.GetComponent<TrackedImageInfoManager>().CloseAllCanvasesAndShowBorders();
+                trackedImageInfoManager.CloseAllCanvasesAndShowBorders();
             }
         }
     }
