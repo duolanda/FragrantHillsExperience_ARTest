@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Draw.unity
     guid: 637834fa0aae845aa809437f1b4f56b0
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Communication.unity
     guid: e8d0d73a0c58d44568022fd5cbbeec28
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ARMap.unity
     guid: 53e1b94074b1c45c1909202d791786de
   m_configObjects:

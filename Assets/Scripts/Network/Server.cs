@@ -20,14 +20,17 @@ public class Server : MonoBehaviour
     private ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
 
     private Dictionary<int, ScenicSpot> spotsDictionary;
+    private List<int> globalIDs = new List<int>();
+
 
     private void Start()
     {
-        //索引转为经典名
-        string json = File.ReadAllText(Application.dataPath + "/Json/ScenicSpots.json");
-        ScenicSpot[] spotsArray = JsonHelper.FromJson<ScenicSpot>(json);
-        List<ScenicSpot> scenicSpots = new List<ScenicSpot>(spotsArray);
-        spotsDictionary = scenicSpots.ToDictionary(spot => spot.id, spot => spot);
+        //索引转为景点名
+        // TextAsset textAsset = Resources.Load<TextAsset>("Json/ScenicSpotsDetails");
+        // string jsonText = textAsset.text;
+        // ScenicSpot[] spotsArray = JsonHelper.FromJson<ScenicSpot>(jsonText);
+        // List<ScenicSpot> scenicSpots = new List<ScenicSpot>(spotsArray);
+        // spotsDictionary = scenicSpots.ToDictionary(spot => spot.id, spot => spot);
     }
 
     void Update()
@@ -90,21 +93,24 @@ public class Server : MonoBehaviour
                 {
                     while (client.Connected)
                     {
-                        int count = reader.ReadInt32();
-                        List<int> numbers = new List<int>();
-                        for (int i = 0; i < count; i++)
+                        byte messageType = reader.ReadByte();
+                        switch (messageType)
                         {
-                            numbers.Add(reader.ReadInt32());
-                        }
+                            case 0: // 类型0：更新列表
+                                int count = reader.ReadInt32();
+                                List<int> numbers = new List<int>();
+                                for (int i = 0; i < count; i++)
+                                {
+                                    numbers.Add(reader.ReadInt32());
+                                }
 
-                        List<string> spots = new List<string>();
-                        foreach (int number in numbers)
-                        {
-                            ScenicSpot spot;
-                            spot = spotsDictionary[number];
-                            spots.Add(spot.name);
+                                lock (globalIDs)
+                                {
+                                    globalIDs = numbers;
+                                }
+                                BroadcastIDs();
+                                break;
                         }
-                        UpdateStatusText($"Received from {endPoint}: {string.Join(", ", spots)}");
                     }
                 }
                 catch (Exception e)
@@ -139,5 +145,31 @@ public class Server : MonoBehaviour
                 client.Close();
             }
         }
+    }
+    
+    private void BroadcastIDs()
+    {
+        lock (clients)
+        {
+            foreach (TcpClient client in clients)
+            {
+                if (client.Connected)
+                {
+                    using (NetworkStream stream = client.GetStream())
+                    {
+                        using (BinaryWriter writer = new BinaryWriter(stream))
+                        {
+                            writer.Write((byte)1); // 类型1：同步列表
+                            writer.Write(globalIDs.Count);
+                            foreach (int number in globalIDs)
+                            {
+                                writer.Write(number);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        UpdateStatusText($"Broadcasted numbers: {string.Join(", ", globalIDs)}");
     }
 }
