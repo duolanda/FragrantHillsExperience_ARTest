@@ -66,7 +66,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
         
         private Dictionary<string, string> ScenicSpotDictionary = new Dictionary<string, string>();
         private Dictionary<GameObject, string> imageObjectToNameMap = new Dictionary<GameObject, string>();
-
+        private List<int> selectedSpotID = new List<int>();
         private static T[] FromJson<T>(string json) {
             ScenicSpotList<T> wrapper = JsonUtility.FromJson<ScenicSpotList<T>>(json);
             return wrapper.items;
@@ -167,6 +167,12 @@ namespace UnityEngine.XR.ARFoundation.Samples
             
             circleBorder.gameObject.SetActive(false);
             canvas.gameObject.SetActive(true);
+        }
+
+        public void onPushSelectButton(Transform selecteButton)
+        {
+            debugInfo.text = "button touched!\n";
+            debugInfo.text += "GameObject：" + selecteButton.parent.parent.gameObject;
         }
 
         public void CloseAllCanvasesAndShowBorders()

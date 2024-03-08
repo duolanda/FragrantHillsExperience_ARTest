@@ -42,7 +42,8 @@ public class TouchEventProcessor : MonoBehaviour
                 // 如果触摸的是具有特定标签的对象，比如“Interactive”，用来实现其他触摸交互
                 else if (hit.collider.gameObject.CompareTag("Interactive"))
                 {
-                    // 可以在这里处理触摸到特定对象的逻辑
+                    Debug.Log("触发选择按钮");
+                    trackedImageInfoManager.onPushSelectButton(gameObject.transform);
                 }
             }
             else {
