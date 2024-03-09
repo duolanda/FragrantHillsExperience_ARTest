@@ -14,7 +14,7 @@ public class Client : MonoBehaviour
     
     private TcpClient tcpClient;
 
-    public delegate void SpotUpdateDelegate();
+    public delegate void SpotUpdateDelegate(List<int> idList);
     public static event SpotUpdateDelegate SpotUpdateEvent;
     
     private List<int> localIDs = new List<int>();
@@ -115,7 +115,7 @@ public class Client : MonoBehaviour
     
     private void UpdateSelectedScenicSpotIDList(List<int> idList)
     {
-        SpotUpdateEvent?.Invoke(); // 触发 AR 部分更新按钮状态和列表
+        SpotUpdateEvent?.Invoke(idList); // 触发 AR 部分更新按钮状态和列表
     }
 
     private void OnApplicationQuit()

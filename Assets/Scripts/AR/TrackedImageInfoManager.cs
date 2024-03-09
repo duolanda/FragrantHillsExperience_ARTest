@@ -91,11 +91,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
         void OnEnable()
         {
             m_TrackedImageManager.trackedImagesChanged += OnTrackedImagesChanged;
+            Client.SpotUpdateEvent += UpdateSelectSpotShow;
         }
 
         void OnDisable()
         {
             m_TrackedImageManager.trackedImagesChanged -= OnTrackedImagesChanged;
+            Client.SpotUpdateEvent -= UpdateSelectSpotShow;
         }
 
         void UpdateInfo(ARTrackedImage trackedImage)
@@ -238,7 +240,32 @@ namespace UnityEngine.XR.ARFoundation.Samples
             TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = "选择该景点";
         }
+        
+        private void UpdateSelectSpotShow(List<int> idList)
+        {
+            // 更新选择的景点的画面
+            List<int> selectedScenicSpots = new List<int>();
+            idList.ForEach(i => selectedScenicSpots.Add(i)); //深拷贝
 
+            foreach (int id in spotID2TrackedGO.Keys) //只更新字典里记录的，没记录的无所谓
+            {
+                if(selectedScenicSpots.Contains(id))
+                {
+                    GameObject TrackedGO = spotID2TrackedGO[id];
+                    Button button = TrackedGO.GetComponentInChildren<Button>();
+                    TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
+                    buttonText.text = "选择该景点";
+                }
+                else
+                {
+                    GameObject TrackedGO = spotID2TrackedGO[id];
+                    Button button = TrackedGO.GetComponentInChildren<Button>();
+                    TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
+                    buttonText.text = "取消选择";
+                }
+            }
+
+        }
 
         
         void LoadScenicSpots()
