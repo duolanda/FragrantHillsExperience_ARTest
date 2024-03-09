@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Mirror.Examples.MultipleAdditiveScenes;
 using TMPro;
 using UnityEngine;
@@ -66,7 +67,11 @@ namespace UnityEngine.XR.ARFoundation.Samples
         
         private Dictionary<string, string> ScenicSpotDictionary = new Dictionary<string, string>();
         private Dictionary<GameObject, string> imageObjectToNameMap = new Dictionary<GameObject, string>();
-        private List<int> selectedSpotID = new List<int>();
+        private Dictionary<int, GameObject> spotID2TrackedGO = new Dictionary<int, GameObject> ();
+        private List<int> selectedScenicSpots = new List<int>();
+        
+        private ScenicSpotsManager scenicSpotsManager;
+        
         private static T[] FromJson<T>(string json) {
             ScenicSpotList<T> wrapper = JsonUtility.FromJson<ScenicSpotList<T>>(json);
             return wrapper.items;
@@ -76,6 +81,11 @@ namespace UnityEngine.XR.ARFoundation.Samples
         {
             m_TrackedImageManager = GetComponent<ARTrackedImageManager>();
             LoadScenicSpots();
+        }
+
+        void Start()
+        {
+            scenicSpotsManager = ScenicSpotsManager.Instance;
         }
 
         void OnEnable()
@@ -169,10 +179,22 @@ namespace UnityEngine.XR.ARFoundation.Samples
             canvas.gameObject.SetActive(true);
         }
 
-        public void onPushSelectButton(Transform selecteButton)
+        public void OnPushSelectButton(Transform selecteButton)
         {
-            debugInfo.text = "button touched!\n";
-            debugInfo.text += "GameObject：" + selecteButton.parent.parent.gameObject;
+            debugInfo.text = "GameObject：" + selecteButton.parent.parent.parent.gameObject;
+            GameObject trackedImageGameObject = selecteButton.parent.parent.gameObject;
+            string spotName = trackedImageGameObject.name;
+            int id = scenicSpotsManager.spotsDictionary.FirstOrDefault(s => s.Value.name == name).Key;
+            spotID2TrackedGO[id] = trackedImageGameObject; // 记录到字典里方便以后用
+
+            if (selectedScenicSpots.Contains(id))
+            {
+                DeselectAScenicSpot(id, trackedImageGameObject, selecteButton.gameObject);
+            }
+            else
+            {
+                SelectAScenicSpot(id, trackedImageGameObject, selecteButton.gameObject);
+            }
         }
 
         public void CloseAllCanvasesAndShowBorders()
@@ -201,6 +223,20 @@ namespace UnityEngine.XR.ARFoundation.Samples
                     item.SetActive(false);
                 }
             }
+        }
+
+        private void SelectAScenicSpot(int id, GameObject trackedGO, GameObject button)
+        {
+            selectedScenicSpots.Add(id);
+            TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
+            buttonText.text = "取消选择";
+        }
+        
+        private void DeselectAScenicSpot(int id, GameObject trackedGO, GameObject button)
+        {
+            selectedScenicSpots.Remove(id); 
+            TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
+            buttonText.text = "选择该景点";
         }
 
 

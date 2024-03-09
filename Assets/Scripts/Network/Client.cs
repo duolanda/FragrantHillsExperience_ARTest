@@ -14,7 +14,10 @@ public class Client : MonoBehaviour
     
     private TcpClient tcpClient;
 
-    private List<int> localNumbers = new List<int>();
+    public delegate void SpotUpdateDelegate();
+    public static event SpotUpdateDelegate SpotUpdateEvent;
+    
+    private List<int> localIDs = new List<int>();
 
     public void ConnectToServer()
     {
@@ -47,12 +50,14 @@ public class Client : MonoBehaviour
                             {
                                 case 1: // 同步列表
                                     int count = reader.ReadInt32();
-                                    localNumbers.Clear();
+                                    localIDs.Clear();
                                     for (int i = 0; i < count; i++)
                                     {
-                                        localNumbers.Add(reader.ReadInt32());
+                                        localIDs.Add(reader.ReadInt32());
                                     }
-                                    Debug.Log($"Received numbers: {string.Join(", ", localNumbers)}");
+
+                                    // UpdateSelectedScenicSpotIDList(localIDs);
+                                    Debug.Log($"Received IDs: {string.Join(", ", localIDs)}");
                                     break;
                             }
                         }
@@ -83,6 +88,12 @@ public class Client : MonoBehaviour
         SendNumbers(numbers);
     }
 
+    public void UpdateLocalIDs(List<int> newIDs)
+    {
+        localIDs = newIDs;
+        SendNumbers(localIDs);
+    }
+
     private void SendNumbers(List<int> numbers)
     {
         if (tcpClient == null || !tcpClient.Connected) return;
@@ -100,6 +111,11 @@ public class Client : MonoBehaviour
             }
         }
         Debug.Log($"Sent numbers: {string.Join(", ", numbers)}");
+    }
+    
+    private void UpdateSelectedScenicSpotIDList(List<int> idList)
+    {
+        SpotUpdateEvent?.Invoke(); // 触发 AR 部分更新按钮状态和列表
     }
 
     private void OnApplicationQuit()

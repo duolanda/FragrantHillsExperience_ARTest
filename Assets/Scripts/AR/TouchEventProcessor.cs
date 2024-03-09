@@ -43,7 +43,7 @@ public class TouchEventProcessor : MonoBehaviour
                 else if (hit.collider.gameObject.CompareTag("Interactive"))
                 {
                     Debug.Log("触发选择按钮");
-                    trackedImageInfoManager.onPushSelectButton(gameObject.transform);
+                    trackedImageInfoManager.OnPushSelectButton(hit.collider.gameObject.transform);
                 }
             }
             else {

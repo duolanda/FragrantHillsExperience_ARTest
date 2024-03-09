@@ -4,19 +4,15 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class ScenicSpotsManager : MonoBehaviour {
+public class ScenicSpotsManager : Singleton<ScenicSpotsManager> {
     public List<ScenicSpot> scenicSpots;
     public Dictionary<int, ScenicSpot> spotsDictionary;
     public PathDrawer pathDrawer;
 
     void Start() {
         ImportScenicSpots();
+        Debug.Log("Json 导入完毕");        
         
-        List<ScenicSpot> result = FindPathCoveringAllSpots(new List<int>(){45,44,35,32,28,21,4,3});
-        // List<ScenicSpot> result = FindPathCoveringAllSpots(new List<int>(){45,20,14,9,51});
-        
-        //pathDrawer.DrawPath(result);
-
         //输出导入的景点
         //foreach (ScenicSpot spot in result)
         //{
@@ -25,8 +21,10 @@ public class ScenicSpotsManager : MonoBehaviour {
     }
     
     void ImportScenicSpots() {
-        string json = File.ReadAllText(Application.dataPath + "/Resources/Json/ScenicSpots.json");
-        ScenicSpot[] spotsArray = JsonHelper.FromJson<ScenicSpot>(json);
+        TextAsset textAsset = Resources.Load<TextAsset>("Json/ScenicSpots");
+        string jsonText = textAsset.text;
+        
+        ScenicSpot[] spotsArray = JsonHelper.FromJson<ScenicSpot>(jsonText);
         scenicSpots = new List<ScenicSpot>(spotsArray);
 
         // 构建邻居关系
