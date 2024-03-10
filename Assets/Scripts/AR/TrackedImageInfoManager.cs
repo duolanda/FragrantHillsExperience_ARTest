@@ -71,6 +71,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
         private List<int> selectedScenicSpots = new List<int>();
         
         private ScenicSpotsManager scenicSpotsManager;
+        private Client ClientControl;
         
         private static T[] FromJson<T>(string json) {
             ScenicSpotList<T> wrapper = JsonUtility.FromJson<ScenicSpotList<T>>(json);
@@ -85,6 +86,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
         void Start()
         {
+            GameObject NetworkManager = GameObject.Find("NetworkManager");
+            if (NetworkManager != null)
+            {
+                ClientControl = NetworkManager.GetComponent<Client>();
+            }
+            ClientControl.ConnectToServer(); //连接到服务器
+            
             scenicSpotsManager = ScenicSpotsManager.Instance;
         }
 
@@ -183,10 +191,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
         public void OnPushSelectButton(Transform selecteButton)
         {
-            debugInfo.text = "GameObject：" + selecteButton.parent.parent.parent.gameObject;
-            GameObject trackedImageGameObject = selecteButton.parent.parent.gameObject;
-            string spotName = trackedImageGameObject.name;
-            int id = scenicSpotsManager.spotsDictionary.FirstOrDefault(s => s.Value.name == name).Key;
+            GameObject trackedImageGameObject = selecteButton.parent.parent.parent.gameObject;
+            
+            imageObjectToNameMap.TryGetValue(trackedImageGameObject, out string spotName);;
+            int id = scenicSpotsManager.spotsDictionary.FirstOrDefault(s => s.Value.name == spotName).Key;
+            
+            debugInfo.text = "spotName：" + spotName;
+            debugInfo.text += "id：" + id;
             spotID2TrackedGO[id] = trackedImageGameObject; // 记录到字典里方便以后用
 
             if (selectedScenicSpots.Contains(id))
@@ -232,6 +243,8 @@ namespace UnityEngine.XR.ARFoundation.Samples
             selectedScenicSpots.Add(id);
             TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = "取消选择";
+            
+            ClientControl.UpdateLocalIDs(selectedScenicSpots);
         }
         
         private void DeselectAScenicSpot(int id, GameObject trackedGO, GameObject button)
@@ -239,6 +252,8 @@ namespace UnityEngine.XR.ARFoundation.Samples
             selectedScenicSpots.Remove(id); 
             TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = "选择该景点";
+            
+            ClientControl.UpdateLocalIDs(selectedScenicSpots);
         }
         
         private void UpdateSelectSpotShow(List<int> idList)
