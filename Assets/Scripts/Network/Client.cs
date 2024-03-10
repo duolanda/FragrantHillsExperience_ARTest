@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.IO;
+using System.Net;
 using System.Threading;
 using TMPro;
 
@@ -61,6 +62,10 @@ public class Client : MonoBehaviour
                                     break;
                             }
                         }
+                    }catch (IOException ex)
+                    {
+                        Debug.Log($"IO Exception: {ex.Message}");
+                        // tcpClient?.Close();
                     }
                     catch (Exception e)
                     {
