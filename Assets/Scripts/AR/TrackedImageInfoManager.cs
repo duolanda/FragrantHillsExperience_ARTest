@@ -99,13 +99,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
         void OnEnable()
         {
             m_TrackedImageManager.trackedImagesChanged += OnTrackedImagesChanged;
-            Client.SpotUpdateEvent += UpdateSelectSpotShow;
+            Client2.SpotUpdateEvent += UpdateSelectSpotShow;
         }
 
         void OnDisable()
         {
             m_TrackedImageManager.trackedImagesChanged -= OnTrackedImagesChanged;
-            Client.SpotUpdateEvent -= UpdateSelectSpotShow;
+            Client2.SpotUpdateEvent -= UpdateSelectSpotShow;
         }
 
         void UpdateInfo(ARTrackedImage trackedImage)
@@ -196,8 +196,6 @@ namespace UnityEngine.XR.ARFoundation.Samples
             imageObjectToNameMap.TryGetValue(trackedImageGameObject, out string spotName);;
             int id = scenicSpotsManager.spotsDictionary.FirstOrDefault(s => s.Value.name == spotName).Key;
             
-            debugInfo.text = "spotName：" + spotName;
-            debugInfo.text += "id：" + id;
             spotID2TrackedGO[id] = trackedImageGameObject; // 记录到字典里方便以后用
 
             if (selectedScenicSpots.Contains(id))
@@ -259,7 +257,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
         private void UpdateSelectSpotShow(List<int> idList)
         {
             // 更新选择的景点的画面
-            List<int> selectedScenicSpots = new List<int>();
+            selectedScenicSpots = new List<int>();
             idList.ForEach(i => selectedScenicSpots.Add(i)); //深拷贝
 
             foreach (int id in spotID2TrackedGO.Keys) //只更新字典里记录的，没记录的无所谓
@@ -280,6 +278,11 @@ namespace UnityEngine.XR.ARFoundation.Samples
                 }
             }
 
+            debugInfo.text = "selectedScenicSpots：";
+            foreach (int id in selectedScenicSpots)
+            {
+                debugInfo.text += id+",";
+            }
         }
 
         
