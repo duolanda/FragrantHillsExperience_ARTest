@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class Client2 : MonoBehaviour
 {
     [SerializeField] private string serverIp = "127.0.0.1";
     [SerializeField] private int serverPort = 7777;
+    [SerializeField] private TMP_InputField inputField; 
+
     private Socket tcpClient;
     private List<int> localIDs = new List<int>();
 
@@ -50,6 +55,7 @@ public class Client2 : MonoBehaviour
                     int bytesRec = tcpClient.Receive(bytes);
                     string data = Encoding.ASCII.GetString(bytes, 0, bytesRec);
                     // Process received data...
+                    ReceiveData(data);
                 }
             }
             catch (Exception e)
@@ -59,7 +65,31 @@ public class Client2 : MonoBehaviour
         });
         listeningThread.Start();
     }
+    
+    public void TestSend()
+    {
+        // Parse numbers from input field
+        string[] numbersStr = inputField.text.Split(',');
+        List<int> numbers = new List<int>();
+        foreach (string numberStr in numbersStr)
+        {
+            if (int.TryParse(numberStr.Trim(), out int number))
+            {
+                numbers.Add(number);
+            }
+        }
 
+        SendNumbers(numbers);
+    }
+
+    private void ReceiveData(string data)
+    {
+        data = data.Replace("<EOF>", "");
+        Debug.Log($"Received: {data}");
+        
+        localIDs = data.Split(',').Select(int.Parse).ToList();
+    }
+    
     private void SendNumbers(List<int> numbers)
     {
         if (tcpClient == null || !tcpClient.Connected) return;
@@ -67,6 +97,7 @@ public class Client2 : MonoBehaviour
         byte[] byteData = Encoding.ASCII.GetBytes(msg);
         tcpClient.Send(byteData);
         Debug.Log($"Sent numbers: {string.Join(", ", numbers)}");
+        Debug.Log($"Sent msg: {msg}");
     }
 
     private void OnApplicationQuit()
