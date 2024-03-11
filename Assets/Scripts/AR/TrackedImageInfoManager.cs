@@ -71,7 +71,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
         private List<int> selectedScenicSpots = new List<int>();
         
         private ScenicSpotsManager scenicSpotsManager;
-        private Client ClientControl;
+        private Client2 ClientControl;
         
         private static T[] FromJson<T>(string json) {
             ScenicSpotList<T> wrapper = JsonUtility.FromJson<ScenicSpotList<T>>(json);
@@ -89,7 +89,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             GameObject NetworkManager = GameObject.Find("NetworkManager");
             if (NetworkManager != null)
             {
-                ClientControl = NetworkManager.GetComponent<Client>();
+                ClientControl = NetworkManager.GetComponent<Client2>();
             }
             ClientControl.ConnectToServer(); //连接到服务器
             

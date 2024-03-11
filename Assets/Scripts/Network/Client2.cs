@@ -86,6 +86,7 @@ public class Client2 : MonoBehaviour
         localIDs = data.Split(',').Select(int.Parse).ToList();
         // UpdateSelectedScenicSpotIDList(localIDs);
         Debug.Log($"Received IDs: {string.Join(", ", localIDs)}");
+        Debug.Log($"data:{data}");
     }
     
     public void UpdateLocalIDs(List<int> newIDs)
