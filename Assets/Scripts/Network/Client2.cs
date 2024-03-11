@@ -15,13 +15,11 @@ public class Client2 : MonoBehaviour
     [SerializeField] private int serverPort = 7777;
     [SerializeField] private TMP_InputField inputField; 
 
+    public delegate void SpotUpdateDelegate(List<int> idList);
+    public static event SpotUpdateDelegate SpotUpdateEvent;
+    
     private Socket tcpClient;
     private List<int> localIDs = new List<int>();
-
-    private void Start()
-    {
-        ConnectToServer();
-    }
 
     public void ConnectToServer()
     {
@@ -85,9 +83,15 @@ public class Client2 : MonoBehaviour
     private void ReceiveData(string data)
     {
         data = data.Replace("<EOF>", "");
-        Debug.Log($"Received: {data}");
-        
         localIDs = data.Split(',').Select(int.Parse).ToList();
+        // UpdateSelectedScenicSpotIDList(localIDs);
+        Debug.Log($"Received IDs: {string.Join(", ", localIDs)}");
+    }
+    
+    public void UpdateLocalIDs(List<int> newIDs)
+    {
+        localIDs = newIDs;
+        SendNumbers(localIDs);
     }
     
     private void SendNumbers(List<int> numbers)
@@ -97,7 +101,11 @@ public class Client2 : MonoBehaviour
         byte[] byteData = Encoding.ASCII.GetBytes(msg);
         tcpClient.Send(byteData);
         Debug.Log($"Sent numbers: {string.Join(", ", numbers)}");
-        Debug.Log($"Sent msg: {msg}");
+    }
+    
+    private void UpdateSelectedScenicSpotIDList(List<int> idList)
+    {
+        SpotUpdateEvent?.Invoke(idList); // 触发 AR 部分更新按钮状态和列表
     }
 
     private void OnApplicationQuit()
