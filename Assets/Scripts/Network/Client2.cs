@@ -83,7 +83,16 @@ public class Client2 : MonoBehaviour
     private void ReceiveData(string data)
     {
         data = data.Replace("<EOF>", "");
-        localIDs = data.Split(',').Select(int.Parse).ToList();
+        
+        if (string.IsNullOrEmpty(data))
+        {
+            localIDs = new List<int>();
+        }
+        else
+        {
+            localIDs = data.Split(',').Select(int.Parse).ToList();
+        }
+        
         UpdateSelectedScenicSpotIDList(localIDs);
         Debug.Log($"Received IDs: {string.Join(", ", localIDs)}");
         Debug.Log($"data:{data}");
