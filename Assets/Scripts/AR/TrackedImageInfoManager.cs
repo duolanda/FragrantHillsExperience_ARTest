@@ -256,7 +256,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
         
         private void UpdateSelectSpotShow(List<int> idList)
         {
-            // 更新选择的景点的画面
+            // 更新选择的景点的按钮
             selectedScenicSpots = new List<int>();
             idList.ForEach(i => selectedScenicSpots.Add(i)); //深拷贝
 
@@ -267,14 +267,14 @@ namespace UnityEngine.XR.ARFoundation.Samples
                     GameObject TrackedGO = spotID2TrackedGO[id];
                     Button button = TrackedGO.GetComponentInChildren<Button>();
                     TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
-                    buttonText.text = "选择该景点";
+                    buttonText.text = "取消选择";
                 }
                 else
                 {
                     GameObject TrackedGO = spotID2TrackedGO[id];
                     Button button = TrackedGO.GetComponentInChildren<Button>();
                     TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
-                    buttonText.text = "取消选择";
+                    buttonText.text = "选择该景点";
                 }
             }
 
