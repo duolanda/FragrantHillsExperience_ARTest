@@ -173,15 +173,14 @@ namespace UnityEngine.XR.ARFoundation.Samples
             ScenicSpotDictionary.TryGetValue(scenicSpotName, out string detail);
             spotDetail.text = detail;
             
-            if (title.text == "梯云山馆")
+            VideoClip videoClip = Resources.Load<VideoClip>("Videos/"+scenicSpotName);
+            if (videoClip != null)
             {
-                VideoClip videoClip = Resources.Load<VideoClip>("Videos/占位视频");
                 ChangeVideoByClip(videoClip);
             }
-
-            if (title.text == "香雾窟")
+            else
             {
-                VideoClip videoClip = Resources.Load<VideoClip>("Videos/占位视频-蓝");
+                videoClip = Resources.Load<VideoClip>("Videos/占位视频");
                 ChangeVideoByClip(videoClip);
             }
             
