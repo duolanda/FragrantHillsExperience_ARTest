@@ -524,9 +524,10 @@ GameObject:
   - component: {fileID: 8399487743269099198}
   - component: {fileID: 7925455951653009457}
   - component: {fileID: 749597209432278500}
+  - component: {fileID: 28978362746734885}
   m_Layer: 5
   m_Name: ScenicVideo
-  m_TagString: Untagged
+  m_TagString: Interactive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -586,6 +587,19 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!65 &28978362746734885
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4129385568637840665}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1916.9, y: 1078.3, z: 1}
+  m_Center: {x: 0, y: 0, z: -0.5}
 --- !u!1 &4428325174962439869
 GameObject:
   m_ObjectHideFlags: 0

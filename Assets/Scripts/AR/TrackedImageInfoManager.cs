@@ -172,6 +172,12 @@ namespace UnityEngine.XR.ARFoundation.Samples
             //更新景点介绍
             ScenicSpotDictionary.TryGetValue(scenicSpotName, out string detail);
             spotDetail.text = detail;
+
+            if (scenicSpotName == "双清别墅东侧平房")
+            {
+                //景点名太长了，会和详情重合
+                spotDetail.text = "\n\n"+detail;
+            }
             
             VideoClip videoClip = Resources.Load<VideoClip>("Videos/"+scenicSpotName);
             if (videoClip != null)
@@ -205,6 +211,30 @@ namespace UnityEngine.XR.ARFoundation.Samples
             {
                 SelectAScenicSpot(id, trackedImageGameObject, selecteButton.gameObject);
             }
+        }
+        
+        // 切换场景视频和物品视频
+        public void OnVideo(Transform videoImage)
+        {
+            GameObject trackedImageGameObject = videoImage.parent.parent.parent.gameObject;
+            
+            imageObjectToNameMap.TryGetValue(trackedImageGameObject, out string spotName);
+
+            if (videoPlayer.clip.name == spotName)
+            {
+                VideoClip videoClip = Resources.Load<VideoClip>("Videos/"+spotName+"_3d");
+                if (videoClip != null)
+                {
+                    ChangeVideoByClip(videoClip);
+                }
+            }
+            else
+            {
+                VideoClip videoClip = Resources.Load<VideoClip>("Videos/"+spotName);
+                ChangeVideoByClip(videoClip);
+            }
+            
+            
         }
 
         public void CloseAllCanvasesAndShowBorders()

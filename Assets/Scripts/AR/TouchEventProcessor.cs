@@ -35,15 +35,22 @@ public class TouchEventProcessor : MonoBehaviour
                 {
                     if (arSessionOrigin != null)
                     {
-                        // Debug.Log("触发的是" + hit.collider.gameObject.transform.parent.parent.gameObject.name);
                         trackedImageInfoManager.OnImageClicked(hit.collider.gameObject.transform.parent.parent.gameObject);
                     }
                 }
                 // 如果触摸的是具有特定标签的对象，比如“Interactive”，用来实现其他触摸交互
                 else if (hit.collider.gameObject.CompareTag("Interactive"))
                 {
-                    Debug.Log("触发选择按钮");
-                    trackedImageInfoManager.OnPushSelectButton(hit.collider.gameObject.transform);
+                    if (hit.collider.gameObject.name == "Button")
+                    {
+                        Debug.Log("触发选择按钮");
+                        trackedImageInfoManager.OnPushSelectButton(hit.collider.gameObject.transform);
+                    }else if(hit.collider.gameObject.name == "ScenicVideo")
+                    {
+                        Debug.Log("触发视频");
+                        trackedImageInfoManager.OnVideo(hit.collider.gameObject.transform);
+                    }
+                    
                 }
             }
             else {
