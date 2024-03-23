@@ -173,7 +173,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             ScenicSpotDictionary.TryGetValue(scenicSpotName, out string detail);
             spotDetail.text = detail;
 
-            if (scenicSpotName == "双清别墅东侧平房")
+            if (scenicSpotName == "双清别墅东侧平房" || scenicSpotName=="镇芳楼 镇南房")
             {
                 //景点名太长了，会和详情重合
                 spotDetail.text = "\n\n"+detail;
@@ -186,8 +186,34 @@ namespace UnityEngine.XR.ARFoundation.Samples
             }
             else
             {
-                videoClip = Resources.Load<VideoClip>("Videos/占位视频");
-                ChangeVideoByClip(videoClip);
+                // 展示景点插图而不是视频
+                Transform ScenicVideoTransform = infoPanel.transform.Find("ScenicVideo");
+                RawImage ScenicVideoImage = ScenicVideoTransform.GetComponent<RawImage>();
+                Texture image = Resources.Load<Texture>("Illustration/" + scenicSpotName);
+                ScenicVideoImage.texture = image;
+                
+                // 获取原始图片的宽高比
+                float aspectRatio = (float)image.width / image.height;
+    
+                // 设定目标尺寸
+                float targetWidth = 1920;
+                float targetHeight = 1080;
+
+                // 计算新的宽度和高度
+                float newWidth, newHeight;
+
+                // 比较原始图片是宽大还是高大
+                if (aspectRatio >= 1) { // 宽大于或等于高，宽度设为1920，高度按比例缩放
+                    newWidth = targetWidth;
+                    newHeight = newWidth / aspectRatio;
+                } else { // 高大于宽，高度设为1080，宽度按比例缩放
+                    newHeight = targetHeight;
+                    newWidth = newHeight * aspectRatio;
+                }
+
+                // 应用计算出的宽度和高度到RectTransform
+                RectTransform rectTransform = ScenicVideoTransform.GetComponent<RectTransform>();
+                rectTransform.sizeDelta = new Vector2(newWidth, newHeight);
             }
             
             circleBorder.gameObject.SetActive(false);
