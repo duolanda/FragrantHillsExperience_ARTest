@@ -161,8 +161,8 @@ namespace UnityEngine.XR.ARFoundation.Samples
             Transform infoPanel = canvas.transform.Find("Background");
             Transform titleTransform = infoPanel.transform.Find("Title");
             Transform spotDetailTransform = infoPanel.transform.Find("SpotDetail");
-            TextMeshPro title = titleTransform.GetComponent<TextMeshPro>();
-            TextMeshPro spotDetail = spotDetailTransform.GetComponent<TextMeshPro>();
+            TextMeshProUGUI title = titleTransform.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI spotDetail = spotDetailTransform.GetComponent<TextMeshProUGUI>();
 
             imageObjectToNameMap.TryGetValue(trackedImageGameObject, out string scenicSpotName);
 
